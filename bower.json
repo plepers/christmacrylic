@@ -1,0 +1,11 @@
+{
+  "name": "xmasxp",
+  "version": "0.0.0",
+  "dependencies": {
+    "modernizr": "~2.6.2",
+    "jquery": "~1.10.2",
+    "requirejs": "~2.1.9",
+    "when": "~2.6.0"
+  },
+  "devDependencies": {}
+}
