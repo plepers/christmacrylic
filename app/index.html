@@ -24,15 +24,6 @@
         <![endif]-->
 
 
-        <div class="hero-unit">
-          <h1>'Allo, 'Allo!</h1>
-          <p>You now have</p>
-          <ul>
-            <li>HTML5 Boilerplate</li>
-            <li>Modernizr</li>
-          </ul>
-        </div>
-
         <div id="canvas-wrapper"></div>
 
 
@@ -57,8 +48,14 @@
         <!-- endbuild -->
 
         <script>
+
+            var opts = {
+
+            }
+
             require(['app'], function(App){
-                new App();
+                var app = new App();
+                app.initialize( opts );
             });
         </script>
 </body>
