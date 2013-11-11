@@ -6,8 +6,10 @@
 
 define [
   'three'
+  'NPRMaterial'
 ], (
   THREE
+  NPRMaterial
 )->
 
   class Scene
@@ -34,7 +36,7 @@ define [
       #loader = new THREE.JSONLoader()
       #loader.load 'assets/teapot.js', @onTeapot
 
-      material = new THREE.MeshLambertMaterial()
+      material = new NPRMaterial()
       #material = new THREE.MeshPhongMaterial()
 
       teapot = new THREE.Mesh(
