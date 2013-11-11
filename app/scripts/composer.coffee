@@ -39,25 +39,64 @@ define [
           phase : 20
         }
         {
-          texSize : 1
+          texSize : .5
           freq : 2
           phase : 25
         }
         {
-          texSize : 1
+          texSize : .5
           freq : 2
           phase : 30
         }
         {
-          texSize : 1
+          texSize : .5
           freq : 2
           phase : 35
         }
         {
-          texSize : 1
+          texSize :.5
           freq : 2
           phase : 40
         }
+        {
+          texSize : .5
+          freq : 2
+          phase : 25
+        }
+        {
+          texSize : .5
+          freq : 2
+          phase : 30
+        }
+        {
+          texSize : .5
+          freq : 2
+          phase : 35
+        }
+        {
+          texSize :.5
+          freq : 2
+          phase : 40
+        }
+
+        {
+          texSize :.5
+          freq : 2
+          phase : 40
+        }
+
+        {
+          texSize :.5
+          freq : 2
+          phase : 40
+        }
+
+        {
+          texSize :.5
+          freq : 2
+          phase : 40
+        }
+
 
       ]
     }
@@ -101,10 +140,16 @@ define [
         format: THREE.RGBFormat
 
       for p, i in @cfg.phases
+        p.freq = [
+          Math.random() * .9 + .4
+          Math.random() * .9 + .4
+          Math.random() * .9 + .4
+        ]
+
         p.phase = [
-          Math.random() * 10
-          Math.random() * 10
-          Math.random() * 10
+          Math.random() * 100
+          Math.random() * 100
+          Math.random() * 100
         ]
         p.tex = new THREE.WebGLRenderTarget( width * p.texSize, height * p.texSize, opts )
         @uniforms[ "tex#{i}" ].value = p.tex

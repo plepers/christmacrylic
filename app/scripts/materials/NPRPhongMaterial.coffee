@@ -28,7 +28,7 @@ define [
 
       @color = new THREE.Color( 0xffffff );
       @ambient = new THREE.Color( 0xffffff );
-      @emissive = new THREE.Color( 0x101010 );
+      @emissive = new THREE.Color( 0x202020 );
       @specular = new THREE.Color( 0x111111 );
       @shininess = 30;
 
@@ -585,7 +585,7 @@ define [
         "mvPosition = modelViewMatrix * vec4( position, 1.0 );",
       "#endif",
 
-      "mvPosition.xyz = mvPosition.xyz + ( coses.x + coses.y + coses.z ) * nbump * objectNormal.xyz;",
+      "mvPosition.xyz = mvPosition.xyz + (( coses.x + coses.y + coses.z ) * nbump * dot(mvPosition, projectionMatrix[3]) ) * objectNormal.xyz;",
 
       "gl_Position = projectionMatrix * mvPosition;"
     ].join( "\n")

@@ -67,10 +67,10 @@ define [
 
       @renderer.clear();
 
-      freq = 2
 
       for p, i in @composer.cfg.phases
-        bumpFreq.value.set( freq, freq, freq )
+        freq = p.freq
+        bumpFreq.value.set( freq[0], freq[1], freq[2])
         bumpPhase.value.set( p.phase[0], p.phase[1], p.phase[2] )
         @renderer.render( @scene.scene3d, @scene.camera, p.tex, yes )
 

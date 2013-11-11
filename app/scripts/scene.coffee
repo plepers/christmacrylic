@@ -29,6 +29,7 @@ define [
 
       @light = new THREE.DirectionalLight( 0x768EA6 , .5 )
       @light.position.set( -.5, .3 , -.2 )
+
       @scene3d.add @light
 
 
@@ -38,34 +39,37 @@ define [
     preRender : (dt)->
       @orbit.update()
 
-      #@material.uniforms.diffuseSharpness.value =
       x = (@ctx.mouse.x-500) / 10
       y = @ctx.mouse.y / 1000
-      s = @ctx.mouse.x / 300 - 2
-      #@material.uniforms.diffuseSharpnessBias.value = 50
+      s = (@ctx.mouse.x - 200) / 300
+      b = (@ctx.mouse.y - 200) / 100
+
+      #console.log s, b
+      #@material.uniforms.diffuseSharpness.value = s
+      #@material.uniforms.diffuseSharpnessBias.value = b
       #@material.uniforms.nbumbPhase.value =  new THREE.Vector3( s, s, s )
       #@material.uniforms.nbumpFreq.value =  new THREE.Vector3( x, x, x )
-      @material.uniforms.nbump.value =  .15
+      @material.uniforms.nbump.value =  .01
 
-      @teapot.rotation.y += .01
+      #@teapot.rotation.y += .01
 
     load : ->
-      #loader = new THREE.JSONLoader()
-      #loader.load 'assets/teapot.js', @onTeapot
 
-      #@material = new NPRMaterial()
-      #@material.uniforms.diffuseSharpness.value = s = .1
-      #@material.uniforms.diffuseSharpnessBias.value = 2
+      tloader = new THREE.TextureLoader( )
+      tloader.load 'assets/bumpbrush.png', @loaded
 
-      #material = new THREE.MeshPhongMaterial()
+    loaded : (tex)=>
 
       @material = new NPRPhongMaterial()
-      @material.uniforms.diffuseSharpness.value = s = .05
-      @material.uniforms.diffuseSharpnessBias.value = 8
+      @material.uniforms.diffuseSharpness.value = s = .12
+      @material.uniforms.diffuseSharpnessBias.value = 3.89
 
       @material.uniforms.nbump.value  =      .2
       @material.uniforms.nbumpFreq.value  =   new THREE.Vector3( 110, 101, 110 )
       @material.uniforms.nbumpPhase.value =   new THREE.Vector3( 1, 1, 1 )
+
+      @material.bumpMap = tex
+      @material.bumpScale = .02
 
       @teapot = new THREE.Mesh(
         new THREE.TeapotGeometry(
