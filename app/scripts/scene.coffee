@@ -25,6 +25,10 @@ define [
       @light.position.set( .5, .5 , .5 )
       @scene3d.add @light
 
+      @light = new THREE.DirectionalLight( 0xB1D7E3 , 1 )
+      @light.position.set( -.5, .5 , -.2 )
+     # @scene3d.add @light
+
 
       @orbit = new THREE.OrbitControls @camera, window.document
 

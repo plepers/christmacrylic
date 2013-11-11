@@ -16,15 +16,57 @@ define [
 
       super
 
-      @uniforms        = THREE.UniformsUtils.clone( SHADER.uniforms )
-      @vertexShader    = SHADER.vertexShader
-      @fragmentShader  = SHADER.fragmentShader
+      shader = THREE.ShaderLib[ 'lambert' ]
 
-      @uniforms.ambient.value = 0x0000FF
-      @uniforms.emissive.value = 0xFF0000
-      @uniforms.wrapRGB.value = new THREE.Vector3( 1, 1, 1 )
+      @uniforms        = THREE.UniformsUtils.clone( shader.uniforms )
+      @vertexShader    = shader.vertexShader
+      @fragmentShader  = shader.fragmentShader
+
+      @uniforms.ambient.value = new THREE.Color( 0xffffff )
+      @uniforms.emissive.value = new THREE.Color( 0x000000 )
+      @uniforms.wrapRGB.value = new THREE.Vector3( 1, 0,0 )
+
+      @color = new THREE.Color( 0xffffff )
+      @ambient = new THREE.Color( 0xffffff )
+      @emissive = new THREE.Color( 0xff0000 )
+    
+      @wrapAround = true
+      @wrapRGB = new THREE.Vector3( 1, 0, 0 )
+    
+      @map = null
+    
+      @lightMap = null
+    
+      @specularMap = null
+    
+      @envMap = null
+      @combine = THREE.MultiplyOperation
+      @reflectivity = 1
+      @refractionRatio = 0.98
+    
+      @fog = true
+    
+      @shading = THREE.SmoothShading
+    
+      @wireframe = false
+      @wireframeLinewidth = 1
+      @wireframeLinecap = 'round'
+      @wireframeLinejoin = 'round'
+    
+      @vertexColors = THREE.NoColors
+    
+      @skinning = false
+      @morphTargets = false
+      @morphNormals = false
+      
+      
+      
+      
+      
+      
 
       @lights = yes
+      @commons = yes
 
   SHADER =
 
@@ -47,11 +89,11 @@ define [
 
       "#define LAMBERT",
 
-      "varying vec3 vLightFront;",
+      "varying vec3 vLightFront",
 
       "#ifdef DOUBLE_SIDED",
 
-        "varying vec3 vLightBack;",
+        "varying vec3 vLightBack",
 
       "#endif",
 
@@ -90,13 +132,13 @@ define [
 
     fragmentShader: [
 
-      "uniform float opacity;",
+      "uniform float opacity",
 
-      "varying vec3 vLightFront;",
+      "varying vec3 vLightFront",
 
       "#ifdef DOUBLE_SIDED",
 
-        "varying vec3 vLightBack;",
+        "varying vec3 vLightBack",
 
       "#endif",
 
@@ -110,7 +152,7 @@ define [
 
       "void main() {",
 
-        "gl_FragColor = vec4( vec3 ( 1.0 ), opacity );",
+        "gl_FragColor = vec4( vec3 ( 1.0 ), opacity )",
 
         THREE.ShaderChunk[ "map_fragment" ],
         THREE.ShaderChunk[ "alphatest_fragment" ],
@@ -119,13 +161,13 @@ define [
         "#ifdef DOUBLE_SIDED",
 
           "if ( gl_FrontFacing )",
-            "gl_FragColor.xyz *= vLightFront;",
+            "gl_FragColor.xyz *= vLightFront",
           "else",
-            "gl_FragColor.xyz *= vLightBack;",
+            "gl_FragColor.xyz *= vLightBack",
 
         "#else",
 
-          "gl_FragColor.xyz *= vLightFront;",
+          "gl_FragColor.xyz *= vLightFront",
 
         "#endif",
 
