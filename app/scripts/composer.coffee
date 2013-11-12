@@ -68,34 +68,7 @@ define [
           freq : 2
           phase : 30
         }
-        {
-          texSize : .5
-          freq : 2
-          phase : 35
-        }
-        {
-          texSize :.5
-          freq : 2
-          phase : 40
-        }
 
-        {
-          texSize :.5
-          freq : 2
-          phase : 40
-        }
-
-        {
-          texSize :.5
-          freq : 2
-          phase : 40
-        }
-
-        {
-          texSize :.5
-          freq : 2
-          phase : 40
-        }
 
 
       ]

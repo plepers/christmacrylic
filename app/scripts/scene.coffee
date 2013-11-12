@@ -20,7 +20,9 @@ define [
 
       @scene3d = new THREE.Scene()
       @camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 1, 20000 )
-      @camera.position.z = 10
+      @camera.position.x = 13.31
+      @camera.position.y = 8.37
+      @camera.position.z = -9.75
 
 
       @light = new THREE.DirectionalLight( 0xE6CF9C , .5 )
@@ -49,7 +51,7 @@ define [
       #@material.uniforms.diffuseSharpnessBias.value = b
       #@material.uniforms.nbumbPhase.value =  new THREE.Vector3( s, s, s )
       #@material.uniforms.nbumpFreq.value =  new THREE.Vector3( x, x, x )
-      @material.uniforms.nbump.value =  .01
+      @material.uniforms.nbump.value =  .006
 
       #@teapot.rotation.y += .01
 
