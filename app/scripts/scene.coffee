@@ -51,7 +51,9 @@ define [
       #@material.uniforms.diffuseSharpnessBias.value = b
       #@material.uniforms.nbumbPhase.value =  new THREE.Vector3( s, s, s )
       #@material.uniforms.nbumpFreq.value =  new THREE.Vector3( x, x, x )
-      @material.uniforms.nbump.value =  .006
+      #@material.uniforms.nbump.value =  .006
+      #@material.bumpScale = b
+      @material.uniforms.shininess.value = 363 #@ctx.mouse.x - 200
 
       #@teapot.rotation.y += .01
 
@@ -63,15 +65,15 @@ define [
     loaded : (tex)=>
 
       @material = new NPRPhongMaterial()
-      @material.uniforms.diffuseSharpness.value = s = .12
-      @material.uniforms.diffuseSharpnessBias.value = 3.89
+      @material.uniforms.diffuseSharpness.value = s = .01
+      @material.uniforms.diffuseSharpnessBias.value = 50
 
-      @material.uniforms.nbump.value  =      .2
+      @material.uniforms.nbump.value  =      .006
       @material.uniforms.nbumpFreq.value  =   new THREE.Vector3( 110, 101, 110 )
       @material.uniforms.nbumpPhase.value =   new THREE.Vector3( 1, 1, 1 )
 
       @material.bumpMap = tex
-      @material.bumpScale = .02
+      @material.bumpScale = .01
 
       @teapot = new THREE.Mesh(
         new THREE.TeapotGeometry(

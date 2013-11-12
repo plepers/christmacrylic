@@ -29,7 +29,7 @@ define [
       @color = new THREE.Color( 0xffffff );
       @ambient = new THREE.Color( 0xffffff );
       @emissive = new THREE.Color( 0x202020 );
-      @specular = new THREE.Color( 0x111111 );
+      @specular = new THREE.Color( 0xFFFFFF );
       @shininess = 30;
 
 
@@ -84,85 +84,84 @@ define [
 
   chunks = {
 
-    lights_npr_pars_vertex: [
-      "#ifndef PHONG_PER_PIXEL",
+    lights_npr_pars_vertex:
+      """
+      #ifndef PHONG_PER_PIXEL 
 
-      "#if MAX_POINT_LIGHTS > 0",
+      #if MAX_POINT_LIGHTS > 0 
 
-        "uniform vec3 pointLightPosition[ MAX_POINT_LIGHTS ];",
-        "uniform float pointLightDistance[ MAX_POINT_LIGHTS ];",
+        uniform vec3 pointLightPosition[ MAX_POINT_LIGHTS ]; 
+        uniform float pointLightDistance[ MAX_POINT_LIGHTS ]; 
 
-        "varying vec4 vPointLight[ MAX_POINT_LIGHTS ];",
+        varying vec4 vPointLight[ MAX_POINT_LIGHTS ]; 
 
-      "#endif",
+      #endif 
 
-      "#if MAX_SPOT_LIGHTS > 0",
+      #if MAX_SPOT_LIGHTS > 0 
 
-        "uniform vec3 spotLightPosition[ MAX_SPOT_LIGHTS ];",
-        "uniform float spotLightDistance[ MAX_SPOT_LIGHTS ];",
+        uniform vec3 spotLightPosition[ MAX_SPOT_LIGHTS ]; 
+        uniform float spotLightDistance[ MAX_SPOT_LIGHTS ]; 
 
-        "varying vec4 vSpotLight[ MAX_SPOT_LIGHTS ];",
+        varying vec4 vSpotLight[ MAX_SPOT_LIGHTS ]; 
 
-      "#endif",
+      #endif 
 
-      "#endif",
+      #endif 
 
-      "#if MAX_SPOT_LIGHTS > 0 || defined( USE_BUMPMAP )",
+      #if MAX_SPOT_LIGHTS > 0 || defined( USE_BUMPMAP ) 
 
-        "varying vec3 vWorldPosition;",
+        varying vec3 vWorldPosition; 
 
-      "#endif"
+      #endif
+      """
 
-    ].join("\n"),
 
+    lights_npr_vertex:
+      """
+      #ifndef PHONG_PER_PIXEL
 
-    lights_npr_vertex: [
+      #if MAX_POINT_LIGHTS > 0
 
-      "#ifndef PHONG_PER_PIXEL",
+        for( int i = 0; i < MAX_POINT_LIGHTS; i ++ ) {
 
-      "#if MAX_POINT_LIGHTS > 0",
+          vec4 lPosition = viewMatrix * vec4( pointLightPosition[ i ], 1.0 );
+          vec3 lVector = lPosition.xyz - mvPosition.xyz;
 
-        "for( int i = 0; i < MAX_POINT_LIGHTS; i ++ ) {",
+          float lDistance = 1.0;
+          if ( pointLightDistance[ i ] > 0.0 )
+            lDistance = 1.0 - min( ( length( lVector ) / pointLightDistance[ i ] ), 1.0 );
 
-          "vec4 lPosition = viewMatrix * vec4( pointLightPosition[ i ], 1.0 );",
-          "vec3 lVector = lPosition.xyz - mvPosition.xyz;",
+          vPointLight[ i ] = vec4( lVector, lDistance );
 
-          "float lDistance = 1.0;",
-          "if ( pointLightDistance[ i ] > 0.0 )",
-            "lDistance = 1.0 - min( ( length( lVector ) / pointLightDistance[ i ] ), 1.0 );",
+        }
 
-          "vPointLight[ i ] = vec4( lVector, lDistance );",
+      #endif
 
-        "}",
+      #if MAX_SPOT_LIGHTS > 0
 
-      "#endif",
+        for( int i = 0; i < MAX_SPOT_LIGHTS; i ++ ) {
 
-      "#if MAX_SPOT_LIGHTS > 0",
+          vec4 lPosition = viewMatrix * vec4( spotLightPosition[ i ], 1.0 );
+          vec3 lVector = lPosition.xyz - mvPosition.xyz;
 
-        "for( int i = 0; i < MAX_SPOT_LIGHTS; i ++ ) {",
+          float lDistance = 1.0;
+          if ( spotLightDistance[ i ] > 0.0 )
+            lDistance = 1.0 - min( ( length( lVector ) / spotLightDistance[ i ] ), 1.0 );
 
-          "vec4 lPosition = viewMatrix * vec4( spotLightPosition[ i ], 1.0 );",
-          "vec3 lVector = lPosition.xyz - mvPosition.xyz;",
+          vSpotLight[ i ] = vec4( lVector, lDistance );
 
-          "float lDistance = 1.0;",
-          "if ( spotLightDistance[ i ] > 0.0 )",
-            "lDistance = 1.0 - min( ( length( lVector ) / spotLightDistance[ i ] ), 1.0 );",
+        }
 
-          "vSpotLight[ i ] = vec4( lVector, lDistance );",
+      #endif
 
-        "}",
+      #endif
 
-      "#endif",
+      #if MAX_SPOT_LIGHTS > 0 || defined( USE_BUMPMAP )
 
-      "#endif",
+        vWorldPosition = worldPosition.xyz;
 
-      "#if MAX_SPOT_LIGHTS > 0 || defined( USE_BUMPMAP )",
-
-        "vWorldPosition = worldPosition.xyz;",
-
-      "#endif"
-
-    ].join("\n"),
+      #endif
+      """
 
     lights_npr_pars_fragment: [
 
@@ -437,7 +436,20 @@ define [
 
 
           "vec3 dirHalfVector = normalize( dirVector + viewPosition );",
-          "float dirDotNormalHalf = max( dot( normal, dirHalfVector ), 0.0 );",
+
+          "float dirDotNormalHalf;",
+
+          "#ifdef DSHARPNESS",
+            "dirDotNormalHalf = dot( normal, dirHalfVector );",
+            "dirDotNormalHalf = (dirDotNormalHalf / .98);",
+            "dirDotNormalHalf = max( 0.0, min( dirDotNormalHalf, 1.0 ) );",
+
+          "#else",
+
+            "dirDotNormalHalf = max( dot( normal, dirHalfVector ), 0.0 );",
+          "#endif",
+
+
           "float dirSpecularWeight = specularStrength * max( pow( dirDotNormalHalf, shininess ), 0.0 );",
 
           "#ifdef PHYSICALLY_BASED_SHADING",
@@ -567,28 +579,56 @@ define [
       uniform vec3 nbumpPhase;
       """
 
-    nbump_vertex :[
+    nbump_coses :
+      """
+      vec3 coses = cos( position.xyz * nbumpFreq + nbumpPhase );
+      """
+    
+    nbumb_normal: 
+      """
+      vec3 objectNormal;
+  
+      #ifdef USE_SKINNING
+        objectNormal = skinnedNormal.xyz;
+      #endif
+  
+      #if !defined( USE_SKINNING ) && defined( USE_MORPHNORMALS )
+        objectNormal = morphedNormal;
+      #endif
+  
+      #if !defined( USE_SKINNING ) && ! defined( USE_MORPHNORMALS )
+        objectNormal = normal;
+      #endif
+  
+      #ifdef FLIP_SIDED
+        objectNormal = -objectNormal;
+      #endif
 
-      "vec4 mvPosition;",
-      "vec3 coses;",
+      objectNormal = objectNormal + coses * .1;
+  
+      vec3 transformedNormal = normalMatrix * objectNormal;
+      """
 
-      "#ifdef USE_SKINNING",
-        "mvPosition = modelViewMatrix * skinned;",
-      "#endif",
+    nbump_vertex :
+      """
+      vec4 mvPosition;
 
-      "#if !defined( USE_SKINNING ) && defined( USE_MORPHTARGETS )",
-        "mvPosition = modelViewMatrix * vec4( morphed, 1.0 );",
-      "#endif",
+      #ifdef USE_SKINNING
+        mvPosition = modelViewMatrix * skinned;
+      #endif
 
-      "#if !defined( USE_SKINNING ) && ! defined( USE_MORPHTARGETS )",
-        "coses = cos( position.xyz * nbumpFreq + nbumpPhase );",
-        "mvPosition = modelViewMatrix * vec4( position, 1.0 );",
-      "#endif",
+      #if !defined( USE_SKINNING ) && defined( USE_MORPHTARGETS )
+        mvPosition = modelViewMatrix * vec4( morphed, 1.0 );
+      #endif
 
-      "mvPosition.xyz = mvPosition.xyz + (( coses.x + coses.y + coses.z ) * nbump * dot(mvPosition, projectionMatrix[3]) ) * objectNormal.xyz;",
+      #if !defined( USE_SKINNING ) && ! defined( USE_MORPHTARGETS )
+        mvPosition = modelViewMatrix * vec4( position, 1.0 );
+      #endif
 
-      "gl_Position = projectionMatrix * mvPosition;"
-    ].join( "\n")
+      mvPosition.xyz = mvPosition.xyz + (( coses.x + coses.y + coses.z ) * nbump * dot(mvPosition, projectionMatrix[3]) ) * objectNormal.xyz;
+
+      gl_Position = projectionMatrix * mvPosition;
+      """
   }
 
   SHADER =
@@ -634,6 +674,7 @@ define [
 
       "void main() {",
 
+        chunks.nbump_coses,
         THREE.ShaderChunk[ "map_vertex" ],
         THREE.ShaderChunk[ "lightmap_vertex" ],
         THREE.ShaderChunk[ "color_vertex" ],
@@ -641,7 +682,7 @@ define [
         THREE.ShaderChunk[ "morphnormal_vertex" ],
         THREE.ShaderChunk[ "skinbase_vertex" ],
         THREE.ShaderChunk[ "skinnormal_vertex" ],
-        THREE.ShaderChunk[ "defaultnormal_vertex" ],
+        chunks.nbumb_normal,
 
         "vNormal = normalize( transformedNormal );",
 
