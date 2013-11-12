@@ -30,7 +30,6 @@ define [
       @ambient = new THREE.Color( 0xffffff );
       @emissive = new THREE.Color( 0x202020 );
       @specular = new THREE.Color( 0xFFFFFF );
-      @shininess = 30;
 
 
       @uniforms.shininess.value = @shininess
@@ -81,6 +80,9 @@ define [
       @lights = yes
       @commons = yes
 
+    setSharpeness : (sharpness, offset )->
+      @uniforms.diffuseSharpness.value = sharpness
+      @uniforms.diffuseSharpnessBias.value = (offset/sharpness)
 
   chunks = {
 

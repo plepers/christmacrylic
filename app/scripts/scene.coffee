@@ -25,7 +25,7 @@ define [
       @camera.position.z = -9.75
 
 
-      @light = new THREE.DirectionalLight( 0xE6CF9C , .5 )
+      @light = new THREE.DirectionalLight( 0xE6CF9C , .6 )
       @light.position.set( .5, .3 , .5 )
       @scene3d.add @light
 
@@ -43,7 +43,7 @@ define [
 
       x = (@ctx.mouse.x-500) / 10
       y = @ctx.mouse.y / 1000
-      s = (@ctx.mouse.x - 200) / 300
+      s = (@ctx.mouse.x - 200) / 3000
       b = (@ctx.mouse.y - 200) / 100
 
       #console.log s, b
@@ -54,7 +54,8 @@ define [
       #@material.uniforms.nbump.value =  .006
       #@material.bumpScale = b
       @material.uniforms.shininess.value = 363 #@ctx.mouse.x - 200
-
+      #@material.setSharpeness s,.5
+      #console.log s
       #@teapot.rotation.y += .01
 
     load : ->
@@ -65,8 +66,9 @@ define [
     loaded : (tex)=>
 
       @material = new NPRPhongMaterial()
-      @material.uniforms.diffuseSharpness.value = s = .01
-      @material.uniforms.diffuseSharpnessBias.value = 50
+
+      @material.shininess = 363
+      @material.setSharpeness .02,.5
 
       @material.uniforms.nbump.value  =      .006
       @material.uniforms.nbumpFreq.value  =   new THREE.Vector3( 110, 101, 110 )
