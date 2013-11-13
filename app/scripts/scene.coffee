@@ -44,15 +44,16 @@ define [
       x = (@ctx.mouse.x-500) / 10
       y = @ctx.mouse.y / 1000
       s = (@ctx.mouse.x - 200) / 3000
-      b = (@ctx.mouse.y - 200) / 100
+      b = (@ctx.mouse.y - 200) / 10000
 
       #console.log s, b
       #@material.uniforms.diffuseSharpness.value = s
       #@material.uniforms.diffuseSharpnessBias.value = b
       #@material.uniforms.nbumbPhase.value =  new THREE.Vector3( s, s, s )
       #@material.uniforms.nbumpFreq.value =  new THREE.Vector3( x, x, x )
-      #@material.uniforms.nbump.value =  .006
-      #@material.bumpScale = b
+      #@material.uniforms.nbump.value =  b
+      #@material.bumpScale= b
+      #@material.normalScale.set( b, b )
       @material.uniforms.shininess.value = 363 #@ctx.mouse.x - 200
       #@material.setSharpeness s,.5
       #console.log s
@@ -61,7 +62,7 @@ define [
     load : ->
 
       tloader = new THREE.TextureLoader( )
-      tloader.load 'assets/bumpbrush.png', @loaded
+      tloader.load 'assets/acrilic_NRM_deep.png', @loaded
 
     loaded : (tex)=>
 
@@ -74,13 +75,13 @@ define [
       @material.uniforms.nbumpFreq.value  =   new THREE.Vector3( 110, 101, 110 )
       @material.uniforms.nbumpPhase.value =   new THREE.Vector3( 1, 1, 1 )
 
-      @material.bumpMap = tex
-      @material.bumpScale = .01
+      @material.normalMap = tex
+      @material.normalScale.set( .2, .2 )
 
       @teapot = new THREE.Mesh(
         new THREE.TeapotGeometry(
           5,
-          5,
+          7,
           true
         ),
         @material

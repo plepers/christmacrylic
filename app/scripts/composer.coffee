@@ -68,6 +68,16 @@ define [
           freq : 2
           phase : 30
         }
+        {
+          texSize : .5
+          freq : 2
+          phase : 25
+        }
+        {
+          texSize : .5
+          freq : 2
+          phase : 30
+        }
 
 
 
@@ -113,6 +123,7 @@ define [
         format: THREE.RGBFormat
 
       for p, i in @cfg.phases
+        p.texSize = 1
         p.freq = [
           Math.random() * .9 + .4
           Math.random() * .9 + .4
