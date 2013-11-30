@@ -25,14 +25,14 @@ define [
       @camera.position.z = -9.75
 
 
-      @light = new THREE.DirectionalLight( 0xE6CF9C , .6 )
-      @light.position.set( .5, .3 , .5 )
-      @scene3d.add @light
+      @light1 = new THREE.DirectionalLight( 0xE6CF9C , 1.0 )
+      @light1.position.set( .5, .3 , .5 )
+      @scene3d.add @light1
 
-      @light = new THREE.DirectionalLight( 0x768EA6 , .5 )
-      @light.position.set( -.5, .3 , -.2 )
+      @light2 = new THREE.DirectionalLight( 0x768EA6 , 1.0 )
+      @light2.position.set( -.5, .3 , -.2 )
 
-      @scene3d.add @light
+      @scene3d.add @light2
 
 
       @orbit = new THREE.OrbitControls @camera, window.document
@@ -45,26 +45,41 @@ define [
       y = @ctx.mouse.y / 1000
       s = (@ctx.mouse.x - 200) / 3000
       b = (@ctx.mouse.y - 200) / 10000
-
+      #@light1.intensity = @ctx.mouse.x/100
       #console.log s, b
       #@material.uniforms.diffuseSharpness.value = s
       #@material.uniforms.diffuseSharpnessBias.value = b
       #@material.uniforms.nbumbPhase.value =  new THREE.Vector3( s, s, s )
       #@material.uniforms.nbumpFreq.value =  new THREE.Vector3( x, x, x )
-      #@material.uniforms.nbump.value =  b
+      @material.uniforms.nbump.value =  b
       #@material.bumpScale= b
       #@material.normalScale.set( b, b )
       @material.uniforms.shininess.value = 363 #@ctx.mouse.x - 200
       #@material.setSharpeness s,.5
       #console.log s
-      #@teapot.rotation.y += .01
+
+      #@mesh.rotation.y += .01
 
     load : ->
 
       tloader = new THREE.TextureLoader( )
-      tloader.load 'assets/acrilic_NRM_deep.png', @loaded
+      tloader.load 'assets/acrilic_NRM_deep.png', @texLoaded
 
-    loaded : (tex)=>
+
+    texLoaded : (@tex)=>
+      console.log 'teLoaded'
+      @loadScene()
+
+
+    loadScene : =>
+      console.log 'loadScene'
+
+      jsonLoader = new THREE.JSONLoader()
+      jsonLoader.load "assets/renne.js", @loaded
+
+
+
+    loaded : (geometry, materials)=>
 
       @material = new NPRPhongMaterial()
 
@@ -75,8 +90,15 @@ define [
       @material.uniforms.nbumpFreq.value  =   new THREE.Vector3( 110, 101, 110 )
       @material.uniforms.nbumpPhase.value =   new THREE.Vector3( 1, 1, 1 )
 
-      @material.normalMap = tex
+      @material.normalMap = @tex
       @material.normalScale.set( .2, .2 )
+
+      @mesh = new THREE.Mesh( geometry, @material )
+      @mesh.scale.set .07,.07,.07
+      @mesh.position.y = -4
+
+      #@mesh.rotation.z = Math.PI
+
 
       @teapot = new THREE.Mesh(
         new THREE.TeapotGeometry(
@@ -87,4 +109,5 @@ define [
         @material
       )
 
-      @scene3d.add( @teapot )
+      #@scene3d.add( @teapot )
+      @scene3d.add( @mesh )

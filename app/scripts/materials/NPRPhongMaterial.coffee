@@ -69,7 +69,7 @@ define [
       @wireframeLinecap = 'round';
       @wireframeLinejoin = 'round';
     
-      @vertexColors = THREE.NoColors;
+      @vertexColors = THREE.VertexColors;
     
       @skinning = false;
       @morphTargets = false;
@@ -417,8 +417,9 @@ define [
 
           "float dotProduct = dot( normal, dirVector );",
           "#ifdef DSHARPNESS",
-            "dotProduct = (dotProduct / diffuseSharpness) - diffuseSharpnessBias;",
-            "dotProduct = min( dotProduct, 1.0 );",
+            #"dotProduct = (dotProduct / diffuseSharpness) - diffuseSharpnessBias;",
+            #"dotProduct = min( dotProduct, 1.0 );",
+            "dotProduct = floor( dotProduct*4.0)/4.0;",
           "#endif",
 
           "#ifdef WRAP_AROUND",
