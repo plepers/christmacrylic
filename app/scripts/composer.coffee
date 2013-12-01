@@ -126,6 +126,8 @@ define [
   getUniforms = (cfg)->
     uniforms =
       numtexs : { type: "f", value: cfg.phases.length },
+      ctMul : { type: "v3", value: new THREE.Vector3(1.0,1.0,1.0) },
+      ctOff : { type: "v3", value: new THREE.Vector3(1.0,1.0,1.0)  },
 
     for p, i in cfg.phases
 	    uniforms[ "tex#{i}" ] = { type: "t", value: null }
@@ -144,6 +146,8 @@ define [
     """
     varying vec2 vUv;
     uniform float numtexs;
+    uniform vec3 ctMul;
+    uniform vec3 ctOff;
 
     void main() {
 
@@ -158,7 +162,8 @@ define [
 
     sh +=
     """
-      gl_FragColor = px / numtexs;
+      gl_FragColor = (px / numtexs);
+      gl_FragColor.xyz = gl_FragColor.xyz * ctMul + ctOff;
 
     }
     """

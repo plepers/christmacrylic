@@ -357,6 +357,8 @@ define [
       img.src = url
       deferred.promise
 
+
+
     # loadModel
     # ---------
     # load a three js json model
@@ -364,8 +366,18 @@ define [
     loadModel : (url)->
       deferred = When.defer()
 
-      new THREE.JSONLoader().load "assets/cadeaux.js", 
-        (geom)->deferred.resolve geom
+      new THREE.JSONLoader().load url, deferred.resolve
+
+      deferred.promise
+
+    # loadModel
+    # ---------
+    # load a three js json model
+
+    loadTexture : (url)->
+      deferred = When.defer()
+
+      new THREE.TextureLoader( ).load url, deferred.resolve
 
       deferred.promise
 

@@ -28,7 +28,7 @@ define [
 
       @color = new THREE.Color( 0xffffff );
       @ambient = new THREE.Color( 0xffffff );
-      @emissive = new THREE.Color( 0x202020 );
+      @emissive = new THREE.Color( 0x101010 );
       @specular = new THREE.Color( 0xFFFFFF );
 
 

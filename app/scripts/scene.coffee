@@ -6,11 +6,13 @@
 
 define [
   'three'
+  'when'
   'materials/NPRMaterial'
   'materials/NPRPhongMaterial'
   './tasks'
 ], (
   THREE
+  When
   NPRMaterial
   NPRPhongMaterial
   tasks
@@ -24,11 +26,13 @@ define [
 
     constructor : (@ctx)->
 
+      @textures = {}
+
       @scene3d = new THREE.Scene()
-      @camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 1, 20000 )
-      @camera.position.x = 133.1
-      @camera.position.y = 83.7
-      @camera.position.z = -97.5
+      @camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 1, 20000 )
+      @camera.position.x = 190
+      @camera.position.y = 118.7
+      @camera.position.z = -138.5
 
       @nprBumpPhase = NprBumpPhase
 
@@ -44,6 +48,7 @@ define [
 
 
       @orbit = new THREE.OrbitControls @camera, window.document
+      @orbit.target.y = 100
 
 
     preRender : (dt)->
@@ -70,43 +75,63 @@ define [
       #@mesh.rotation.y += .01
 
     load : ->
+      When.all( [
+        @loadTexture 'acrilic_NRM_deep.png'
+        @loadTexture 'sky.jpg'
+      ] )
+      .then @texLoaded
 
-      tloader = new THREE.TextureLoader( )
-      tloader.load 'assets/acrilic_NRM_deep.png', @texLoaded
-
-
-    texLoaded : (tex)=>
-      @acrilicTex = tex
-      console.log 'acrilicTexLoaded'
+    texLoaded : ()=>
+      console.log 'textures loaded'
+      @acrilicTex = @textures['acrilic_NRM_deep.png']
       @loadScene()
 
 
     loadScene : =>
       console.log 'loadScene'
 
-      @loadModel("cadeaux")
-        .then @loaded
-      
+      @loadModel 'sapin'
+      @loadModel 'ground'
+      @loadModel 'chalets'
+      @loadModel 'foret'
+      @loadModel 'sleigh'
 
+      tasks.loadModel( 'assets/sky.js' )
+        .then @skyLoaded
+        
+      
+    skyLoaded : (geom) =>
+      mat = new THREE.MeshBasicMaterial
+        map : @textures['sky.jpg']
+
+      sky = new THREE.Mesh geom, mat
+      @scene3d.add( sky )
 
 
     loaded : (mesh)=>
+      console.log 'loaded mesh', mesh
       @scene3d.add( mesh )
 
       @material = mesh.material
 
-
+    loadTexture : (file)->
+      tasks.loadTexture("assets/#{file}")
+        .then (tex)=>
+          console.log file
+          tex.wrapS = tex.wrapT = THREE.RepeatWrapping
+          @textures[file] = tex
 
     loadModel : (name)->
       tasks.loadModel("assets/#{name}.js")
         .then( @createMesh(name) )
+        .then @loaded
         
     createMesh : (name)=>
       (geom)=>
-        mat = @createMaterial materials[name]
+        matdef = materials[name] || materials['default']
+        mat = @createMaterial matdef
         mesh = new THREE.Mesh geom, mat
         mesh.name = name
-        mesh.scale.set .7,.7,.7
         mesh.position.y = -4
         mesh
 
@@ -126,18 +151,39 @@ define [
       if opts.nprFreq?    then mat.uniforms.nbumpFreq.value.set( opts.nprFreq, opts.nprFreq, opts.nprFreq )
       if opts.acrilic?    then mat.normalScale.set( opts.acrilic, opts.acrilic )
 
+      if opts.vc 
+        mat.vertexColors = THREE.VertexColors
+      else
+        mat.vertexColors = THREE.NoColors
 
       mat
 
 
   materials = 
-    cadeaux : 
+    default : 
       shininess : 363
       sharpeness : .02
       sharpoff : .5
       nprBump : .004
       nprFreq : 20
       acrilic : .5
+      vc : yes
+    sapin : 
+      shininess : 363
+      sharpeness : .02
+      sharpoff : .5
+      nprBump : .004
+      nprFreq : 20
+      acrilic : .5
+      vc : yes
+    ground : 
+      shininess : 363
+      sharpeness : .02
+      sharpoff : .5
+      nprBump : .004
+      nprFreq : 20
+      acrilic : .1
+      vc : no
 
   Scene
 
