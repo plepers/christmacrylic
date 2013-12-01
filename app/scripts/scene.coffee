@@ -8,11 +8,17 @@ define [
   'three'
   'materials/NPRMaterial'
   'materials/NPRPhongMaterial'
+  './tasks'
 ], (
   THREE
   NPRMaterial
   NPRPhongMaterial
+  tasks
 )->
+
+
+  NprBumpPhase = new THREE.Vector3(0,0,0)
+
 
   class Scene
 
@@ -20,9 +26,11 @@ define [
 
       @scene3d = new THREE.Scene()
       @camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 1, 20000 )
-      @camera.position.x = 13.31
-      @camera.position.y = 8.37
-      @camera.position.z = -9.75
+      @camera.position.x = 133.1
+      @camera.position.y = 83.7
+      @camera.position.z = -97.5
+
+      @nprBumpPhase = NprBumpPhase
 
 
       @light1 = new THREE.DirectionalLight( 0xE6CF9C , 1.0 )
@@ -41,7 +49,7 @@ define [
     preRender : (dt)->
       @orbit.update()
 
-      x = (@ctx.mouse.x-500) / 10
+      x = (@ctx.mouse.x-500) * .001
       y = @ctx.mouse.y / 1000
       s = (@ctx.mouse.x - 200) / 3000
       b = (@ctx.mouse.y - 200) / 10000
@@ -50,11 +58,12 @@ define [
       #@material.uniforms.diffuseSharpness.value = s
       #@material.uniforms.diffuseSharpnessBias.value = b
       #@material.uniforms.nbumbPhase.value =  new THREE.Vector3( s, s, s )
-      #@material.uniforms.nbumpFreq.value =  new THREE.Vector3( x, x, x )
-      @material.uniforms.nbump.value =  b
+      
+      #@material?.uniforms.nbumpFreq.value =  new THREE.Vector3( x, x, x )
+      #@material.uniforms.nbump.value =  b
       #@material.bumpScale= b
       #@material.normalScale.set( b, b )
-      @material.uniforms.shininess.value = 363 #@ctx.mouse.x - 200
+      #@material.uniforms.shininess.value = 363 #@ctx.mouse.x - 200
       #@material.setSharpeness s,.5
       #console.log s
 
@@ -66,48 +75,71 @@ define [
       tloader.load 'assets/acrilic_NRM_deep.png', @texLoaded
 
 
-    texLoaded : (@tex)=>
-      console.log 'teLoaded'
+    texLoaded : (tex)=>
+      @acrilicTex = tex
+      console.log 'acrilicTexLoaded'
       @loadScene()
 
 
     loadScene : =>
       console.log 'loadScene'
 
-      jsonLoader = new THREE.JSONLoader()
-      jsonLoader.load "assets/renne.js", @loaded
+      @loadModel("cadeaux")
+        .then @loaded
+      
 
 
 
-    loaded : (geometry, materials)=>
+    loaded : (mesh)=>
+      @scene3d.add( mesh )
 
-      @material = new NPRPhongMaterial()
-
-      @material.shininess = 363
-      @material.setSharpeness .02,.5
-
-      @material.uniforms.nbump.value  =      .006
-      @material.uniforms.nbumpFreq.value  =   new THREE.Vector3( 110, 101, 110 )
-      @material.uniforms.nbumpPhase.value =   new THREE.Vector3( 1, 1, 1 )
-
-      @material.normalMap = @tex
-      @material.normalScale.set( .2, .2 )
-
-      @mesh = new THREE.Mesh( geometry, @material )
-      @mesh.scale.set .07,.07,.07
-      @mesh.position.y = -4
-
-      #@mesh.rotation.z = Math.PI
+      @material = mesh.material
 
 
-      @teapot = new THREE.Mesh(
-        new THREE.TeapotGeometry(
-          5,
-          7,
-          true
-        ),
-        @material
-      )
 
-      #@scene3d.add( @teapot )
-      @scene3d.add( @mesh )
+    loadModel : (name)->
+      tasks.loadModel("assets/#{name}.js")
+        .then( @createMesh(name) )
+        
+    createMesh : (name)=>
+      (geom)=>
+        mat = @createMaterial materials[name]
+        mesh = new THREE.Mesh geom, mat
+        mesh.name = name
+        mesh.scale.set .7,.7,.7
+        mesh.position.y = -4
+        mesh
+
+    createMaterial : (opts)=>
+      mat = new NPRPhongMaterial()
+      mat.uniforms.nbumpPhase.value = @nprBumpPhase
+
+      mat.normalMap = @acrilicTex
+
+      if opts.shininess?  then mat.shininess = opts.shininess
+
+      sharpness = opts.sharpeness or .02
+      sharpoff =  opts.sharpoff or .5
+      mat.setSharpeness sharpness, sharpoff
+
+      if opts.nprBump?    then mat.uniforms.nbump.value  =      opts.nprBump
+      if opts.nprFreq?    then mat.uniforms.nbumpFreq.value.set( opts.nprFreq, opts.nprFreq, opts.nprFreq )
+      if opts.acrilic?    then mat.normalScale.set( opts.acrilic, opts.acrilic )
+
+
+      mat
+
+
+  materials = 
+    cadeaux : 
+      shininess : 363
+      sharpeness : .02
+      sharpoff : .5
+      nprBump : .004
+      nprFreq : 20
+      acrilic : .5
+
+  Scene
+
+
+

@@ -15,11 +15,13 @@ define [
   'when'
   'jquery'
   'underscore'
+  'three'
   'errors'
 ], (
   When
   $
   _
+  THREE
   errors
 )->
 
@@ -355,6 +357,17 @@ define [
       img.src = url
       deferred.promise
 
+    # loadModel
+    # ---------
+    # load a three js json model
+
+    loadModel : (url)->
+      deferred = When.defer()
+
+      new THREE.JSONLoader().load "assets/cadeaux.js", 
+        (geom)->deferred.resolve geom
+
+      deferred.promise
 
 
 
