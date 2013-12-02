@@ -20,6 +20,9 @@ define [
 
 
   NprBumpPhase = new THREE.Vector3(0,0,0)
+  NprFreqLow = new THREE.Vector3(5,5,5)
+  NprFreqHi = new THREE.Vector3(5,5,5)
+
 
 
   class Scene
@@ -30,14 +33,14 @@ define [
 
       @scene3d = new THREE.Scene()
       @camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 1, 20000 )
-      @camera.position.x = 190
-      @camera.position.y = 118.7
-      @camera.position.z = -138.5
+      @camera.position.x = -247.32693778059766
+      @camera.position.y = 147.07942855805342
+      @camera.position.z = 300
 
       @nprBumpPhase = NprBumpPhase
 
 
-      @light1 = new THREE.DirectionalLight( 0xE6CF9C , 1.0 )
+      @light1 = new THREE.DirectionalLight( 0xE6CF9C , .8 )
       @light1.position.set( .5, .3 , .5 )
       @scene3d.add @light1
 
@@ -48,13 +51,16 @@ define [
 
 
       @orbit = new THREE.OrbitControls @camera, window.document
-      @orbit.target.y = 100
+      @orbit.target.set -100, 100, -200
+
 
 
     preRender : (dt)->
       @orbit.update()
 
-      x = (@ctx.mouse.x-500) * .001
+      console.log @camera.position
+
+      x = (@ctx.mouse.x-500) * .00001
       y = @ctx.mouse.y / 1000
       s = (@ctx.mouse.x - 200) / 3000
       b = (@ctx.mouse.y - 200) / 10000
@@ -63,7 +69,8 @@ define [
       #@material.uniforms.diffuseSharpness.value = s
       #@material.uniforms.diffuseSharpnessBias.value = b
       #@material.uniforms.nbumbPhase.value =  new THREE.Vector3( s, s, s )
-      
+      x = (5+x)
+      NprFreqLow.set x, x, x
       #@material?.uniforms.nbumpFreq.value =  new THREE.Vector3( x, x, x )
       #@material.uniforms.nbump.value =  b
       #@material.bumpScale= b
@@ -148,8 +155,9 @@ define [
       mat.setSharpeness sharpness, sharpoff
 
       if opts.nprBump?    then mat.uniforms.nbump.value  =      opts.nprBump
-      if opts.nprFreq?    then mat.uniforms.nbumpFreq.value.set( opts.nprFreq, opts.nprFreq, opts.nprFreq )
+      if opts.nprFreq?    then mat.uniforms.nbumpFreq.value = opts.nprFreq
       if opts.acrilic?    then mat.normalScale.set( opts.acrilic, opts.acrilic )
+
 
       if opts.vc 
         mat.vertexColors = THREE.VertexColors
@@ -165,7 +173,7 @@ define [
       sharpeness : .02
       sharpoff : .5
       nprBump : .004
-      nprFreq : 20
+      nprFreq : NprFreqHi
       acrilic : .5
       vc : yes
     sapin : 
@@ -173,15 +181,24 @@ define [
       sharpeness : .02
       sharpoff : .5
       nprBump : .004
-      nprFreq : 20
+      nprFreq : NprFreqHi
       acrilic : .5
       vc : yes
-    ground : 
+
+    foret:
       shininess : 363
       sharpeness : .02
       sharpoff : .5
       nprBump : .004
-      nprFreq : 20
+      nprFreq : NprFreqLow
+      acrilic : .5
+      vc : yes
+    ground : 
+      shininess : 0
+      sharpeness : .02
+      sharpoff : .5
+      nprBump : .004
+      nprFreq : NprFreqLow
       acrilic : .1
       vc : no
 

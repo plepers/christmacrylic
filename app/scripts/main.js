@@ -10,7 +10,6 @@ require.config( {
 
   paths: {
 
-
     three:        'three',
 
     jquery:       '../bower_components/jquery/jquery',

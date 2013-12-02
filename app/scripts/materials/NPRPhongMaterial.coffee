@@ -607,9 +607,10 @@ define [
         objectNormal = -objectNormal;
       #endif
 
-      objectNormal = objectNormal + coses * .1;
-  
+      
       vec3 transformedNormal = normalMatrix * objectNormal;
+
+      transformedNormal = transformedNormal + coses * .1;
       """
 
     nbump_vertex :

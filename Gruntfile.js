@@ -159,20 +159,12 @@ module.exports = function (grunt) {
             when: "../../app/bower_components/when/when",
             three: "three",
           },
-          modules: [
-            {
-              name: "libs",
-              include: ["three"]
-            },
-            {
-              name: "app",
-              exclude: ["libs"]
-            }
-          ],
+          
+          name: "app",
           findNestedDependencies: true,
           preserveLicenseComments: false,
           useStrict: true,
-          wrap: true,
+          wrap: false,
           removeCombined: true,
           dir: "<%= yeoman.dist %>/js"
         }
@@ -426,7 +418,7 @@ module.exports = function (grunt) {
     'concat',
     'cssmin',
     'uglify',
-    'modernizr',
+    //'modernizr',
     'copy:dist',
     'rev',
     'usemin'
