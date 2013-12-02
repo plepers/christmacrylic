@@ -25,6 +25,9 @@ define [
 
     init : (@ctx) ->
 
+      @gui = new dat.GUI()
+      @gui.add @, '_running'
+
       @renderer = new THREE.WebGLRenderer(
         antialias: true # to get smoother output
         preserveDrawingBuffer: true # to allow screenshot

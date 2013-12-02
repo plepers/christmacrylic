@@ -13,13 +13,12 @@
         <!-- build:css(.tmp) styles/main.css -->
         <link rel="stylesheet" href="styles/main.css">
         <!-- endbuild -->
-        <!-- build:js scripts/vendor/modernizr.js -->
-        <script src="bower_components/modernizr/modernizr.js"></script>
+        <!-- build:js scripts/modernizr.js -->
+        <script src="../libs/modernizr/modernizr-custom.js"></script>
         <!-- endbuild -->
-
-
-        <!-- build:js scripts/vendor/require.js -->
-        <script src="bower_components/requirejs/require.js"></script>
+        <!-- build:js scripts/vendors.js -->
+        <script src="../libs/requirejs/require.js"></script>
+        <script src="scripts/dat.gui.min.js"></script>
         <!-- endbuild -->
     </head>
     <body>
@@ -31,28 +30,9 @@
         <div id="canvas-wrapper"></div>
 
 
-        <!-- build:js scripts/vendor.js -->
-        <!-- bower:js -->
-        <script src="bower_components/jquery/jquery.js"></script>
-        <script src="scripts/dat.gui.min.js"></script>
-        <!-- endbower -->
-        <!-- endbuild -->
 
-       
-        <!-- build:js scripts/main.js -->
         <script src="scripts/main.js"></script>
-        <!-- endbuild -->
+</body>
 
-        <script>
-
-            var opts = {
-
-            }
-
-            require(['app'], function(App){
-                var app = new App();
-                app.initialize( opts );
-            });
-        </script>
 </body>
 </html>

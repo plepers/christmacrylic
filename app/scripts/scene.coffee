@@ -58,7 +58,7 @@ define [
     preRender : (dt)->
       @orbit.update()
 
-      console.log @camera.position
+      #console.log @camera.position
 
       x = (@ctx.mouse.x-500) * .00001
       y = @ctx.mouse.y / 1000
