@@ -48,6 +48,7 @@ define [
 
       @gui = new dat.GUI()
       @gui.add @scene, 'animate'
+      @gui.add @scene, 'noisiness', 0, .01
 
 
     play : ->

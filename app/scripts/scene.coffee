@@ -30,9 +30,12 @@ define [
     constructor : (@ctx)->
 
       @textures = {}
+      @materials = []
 
       @animate = no
       @animCount = 0
+
+      @noisiness = .004
 
       @scene3d = new THREE.Scene()
       @camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 1, 20000 )
@@ -53,7 +56,7 @@ define [
       @scene3d.add @light2
 
 
-      @orbit = new THREE.OrbitControls @camera, window.document
+      @orbit = new THREE.OrbitControls @camera, document.getElementById("canvas-wrapper")
       @orbit.target.set -100, 100, -200
 
 
@@ -61,39 +64,20 @@ define [
     preRender : (dt)->
       @orbit.update()
 
+      for m in @materials
+        m.uniforms.nbump.value  = @noisiness
+
       if @animate
         @animCount++
         if @animCount == 3
           @animCount = 0
-          low = Math.random()*.001 + 5.0
+          low = Math.random()*.001 + .8
           NprFreqLow.set low,low,low
-          hi = Math.random()*.02 + 5.0
+          hi = Math.random()*.02 + .8
           NprFreqHi.set hi,hi,hi
 
 
 
-      #console.log @camera.position
-
-      x = (@ctx.mouse.x-500) * .00001
-      y = @ctx.mouse.y / 1000
-      s = (@ctx.mouse.x - 200) / 3000
-      b = (@ctx.mouse.y - 200) / 10000
-      #@light1.intensity = @ctx.mouse.x/100
-      #console.log s, b
-      #@material.uniforms.diffuseSharpness.value = s
-      #@material.uniforms.diffuseSharpnessBias.value = b
-      #@material.uniforms.nbumbPhase.value =  new THREE.Vector3( s, s, s )
-      #x = (5+x)
-      #NprFreqLow.set x, x, x
-      #@material?.uniforms.nbumpFreq.value =  new THREE.Vector3( x, x, x )
-      #@material.uniforms.nbump.value =  b
-      #@material.bumpScale= b
-      #@material.normalScale.set( b, b )
-      #@material.uniforms.shininess.value = 363 #@ctx.mouse.x - 200
-      #@material.setSharpeness s,.5
-      #console.log s
-
-      #@mesh.rotation.y += .01
 
     load : ->
       When.all( [
@@ -126,6 +110,7 @@ define [
         map : @textures['sky.jpg']
 
       sky = new THREE.Mesh geom, mat
+      sky.rotation.y = -Math.PI*.7
       @scene3d.add( sky )
 
 
@@ -179,6 +164,7 @@ define [
       else
         mat.vertexColors = THREE.NoColors
 
+      @materials.push mat
       mat
 
 

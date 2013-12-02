@@ -164,8 +164,13 @@ define [
 
     sh +=
     """
+
+      vec2 vign = (vUv.xy-.5)*2.0;
+      vign = 1.0-pow( vign, vec2(6.0) );
+      float t = ( vign.x*vign.y*.5 )+.5;
+
       gl_FragColor = (px / numtexs);
-      gl_FragColor.xyz = gl_FragColor.xyz * ctMul + ctOff;
+      gl_FragColor.xyz = (gl_FragColor.xyz * ctMul + ctOff)*t;
 
     }
     """
@@ -173,6 +178,7 @@ define [
 
     """
     varying vec2 vUv;
+
 
     void main() {
 
