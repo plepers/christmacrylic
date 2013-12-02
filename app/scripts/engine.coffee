@@ -37,7 +37,7 @@ define [
       document.getElementById("canvas-wrapper").appendChild @renderer.domElement
 
       @composer = new Composer()
-      mul = 1.1
+      mul = 1.2
       Off = -.05
       @composer.uniforms.ctMul.value.set mul,mul,mul
       @composer.uniforms.ctOff.value.set Off,Off,Off

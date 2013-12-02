@@ -73,7 +73,7 @@ define [
           @animCount = 0
           low = Math.random()*.001 + .8
           NprFreqLow.set low,low,low
-          hi = Math.random()*.02 + .8
+          hi = Math.random()*.005 + .8
           NprFreqHi.set hi,hi,hi
 
 
