@@ -39,42 +39,42 @@ define [
 
       @metal = false;
       @perPixel = true;
-    
+
       @wrapAround = false;
       @wrapRGB = new THREE.Vector3( 1, 1, 1 );
-    
+
       @map = null;
-    
+
       @lightMap = null;
-    
+
       @bumpMap = null;
       @bumpScale = 1;
-    
+
       @normalMap = null;
       @normalScale = new THREE.Vector2( 1, 1 );
-    
+
       @specularMap = null;
-    
+
       @envMap = null;
       @combine = THREE.MultiplyOperation;
       @reflectivity = 1;
       @refractionRatio = 0.98;
-    
+
       @fog = true;
-    
+
       @shading = THREE.SmoothShading;
-    
+
       @wireframe = false;
       @wireframeLinewidth = 1;
       @wireframeLinecap = 'round';
       @wireframeLinejoin = 'round';
-    
+
       @vertexColors = THREE.VertexColors;
-    
+
       @skinning = false;
       @morphTargets = false;
       @morphNormals = false;
-      
+
 
 
       @lights = yes
@@ -88,31 +88,31 @@ define [
 
     lights_npr_pars_vertex:
       """
-      #ifndef PHONG_PER_PIXEL 
+      #ifndef PHONG_PER_PIXEL
 
-      #if MAX_POINT_LIGHTS > 0 
+      #if MAX_POINT_LIGHTS > 0
 
-        uniform vec3 pointLightPosition[ MAX_POINT_LIGHTS ]; 
-        uniform float pointLightDistance[ MAX_POINT_LIGHTS ]; 
+        uniform vec3 pointLightPosition[ MAX_POINT_LIGHTS ];
+        uniform float pointLightDistance[ MAX_POINT_LIGHTS ];
 
-        varying vec4 vPointLight[ MAX_POINT_LIGHTS ]; 
+        varying vec4 vPointLight[ MAX_POINT_LIGHTS ];
 
-      #endif 
+      #endif
 
-      #if MAX_SPOT_LIGHTS > 0 
+      #if MAX_SPOT_LIGHTS > 0
 
-        uniform vec3 spotLightPosition[ MAX_SPOT_LIGHTS ]; 
-        uniform float spotLightDistance[ MAX_SPOT_LIGHTS ]; 
+        uniform vec3 spotLightPosition[ MAX_SPOT_LIGHTS ];
+        uniform float spotLightDistance[ MAX_SPOT_LIGHTS ];
 
-        varying vec4 vSpotLight[ MAX_SPOT_LIGHTS ]; 
+        varying vec4 vSpotLight[ MAX_SPOT_LIGHTS ];
 
-      #endif 
+      #endif
 
-      #endif 
+      #endif
 
-      #if MAX_SPOT_LIGHTS > 0 || defined( USE_BUMPMAP ) 
+      #if MAX_SPOT_LIGHTS > 0 || defined( USE_BUMPMAP )
 
-        varying vec3 vWorldPosition; 
+        varying vec3 vWorldPosition;
 
       #endif
       """
@@ -584,30 +584,30 @@ define [
 
     nbump_coses :
       """
-      vec3 coses = cos( position.xyz * nbumpFreq + nbumpPhase );
+      vec3 coses = cos( ( position.xyz + nbumpPhase ) * nbumpFreq );
       """
-    
-    nbumb_normal: 
+
+    nbumb_normal:
       """
       vec3 objectNormal;
-  
+
       #ifdef USE_SKINNING
         objectNormal = skinnedNormal.xyz;
       #endif
-  
+
       #if !defined( USE_SKINNING ) && defined( USE_MORPHNORMALS )
         objectNormal = morphedNormal;
       #endif
-  
+
       #if !defined( USE_SKINNING ) && ! defined( USE_MORPHNORMALS )
         objectNormal = normal;
       #endif
-  
+
       #ifdef FLIP_SIDED
         objectNormal = -objectNormal;
       #endif
 
-      
+
       vec3 transformedNormal = normalMatrix * objectNormal;
 
       transformedNormal = transformedNormal + coses * .1;
@@ -748,6 +748,6 @@ define [
       "}"
 
     ].join("\n")
-  
-  
+
+
   NPRPhongMaterial

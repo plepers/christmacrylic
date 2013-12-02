@@ -31,6 +31,9 @@ define [
 
       @textures = {}
 
+      @animate = no
+      @animCount = 0
+
       @scene3d = new THREE.Scene()
       @camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 1, 20000 )
       @camera.position.x = -247.32693778059766
@@ -58,6 +61,17 @@ define [
     preRender : (dt)->
       @orbit.update()
 
+      if @animate
+        @animCount++
+        if @animCount == 3
+          @animCount = 0
+          low = Math.random()*.001 + 5.0
+          NprFreqLow.set low,low,low
+          hi = Math.random()*.02 + 5.0
+          NprFreqHi.set hi,hi,hi
+
+
+
       #console.log @camera.position
 
       x = (@ctx.mouse.x-500) * .00001
@@ -69,8 +83,8 @@ define [
       #@material.uniforms.diffuseSharpness.value = s
       #@material.uniforms.diffuseSharpnessBias.value = b
       #@material.uniforms.nbumbPhase.value =  new THREE.Vector3( s, s, s )
-      x = (5+x)
-      NprFreqLow.set x, x, x
+      #x = (5+x)
+      #NprFreqLow.set x, x, x
       #@material?.uniforms.nbumpFreq.value =  new THREE.Vector3( x, x, x )
       #@material.uniforms.nbump.value =  b
       #@material.bumpScale= b
@@ -105,8 +119,8 @@ define [
 
       tasks.loadModel( 'assets/sky.js' )
         .then @skyLoaded
-        
-      
+
+
     skyLoaded : (geom) =>
       mat = new THREE.MeshBasicMaterial
         map : @textures['sky.jpg']
@@ -132,7 +146,7 @@ define [
       tasks.loadModel("assets/#{name}.js")
         .then( @createMesh(name) )
         .then @loaded
-        
+
     createMesh : (name)=>
       (geom)=>
         matdef = materials[name] || materials['default']
@@ -148,7 +162,8 @@ define [
 
       mat.normalMap = @acrilicTex
 
-      if opts.shininess?  then mat.shininess = opts.shininess
+      if opts.shininess?  then mat.uniforms.shininess.value = opts.shininess
+      if opts.specular?  then mat.uniforms.specular.value = new THREE.Color opts.specular
 
       sharpness = opts.sharpeness or .02
       sharpoff =  opts.sharpoff or .5
@@ -159,7 +174,7 @@ define [
       if opts.acrilic?    then mat.normalScale.set( opts.acrilic, opts.acrilic )
 
 
-      if opts.vc 
+      if opts.vc
         mat.vertexColors = THREE.VertexColors
       else
         mat.vertexColors = THREE.NoColors
@@ -167,17 +182,30 @@ define [
       mat
 
 
-  materials = 
-    default : 
+  materials =
+    default :
       shininess : 363
+      specular : 0xFFFFFF
       sharpeness : .02
       sharpoff : .5
       nprBump : .004
       nprFreq : NprFreqHi
       acrilic : .5
       vc : yes
-    sapin : 
-      shininess : 363
+
+    sleigh :
+      shininess : 10
+      specular : 0xFFE08A
+      sharpeness : .02
+      sharpoff : .5
+      nprBump : .004
+      nprFreq : NprFreqHi
+      acrilic : .5
+      vc : yes
+
+    sapin :
+      shininess : 300
+      specular : 0x453C25
       sharpeness : .02
       sharpoff : .5
       nprBump : .004
@@ -193,8 +221,10 @@ define [
       nprFreq : NprFreqLow
       acrilic : .5
       vc : yes
-    ground : 
-      shininess : 0
+
+    ground :
+      shininess : 300
+      specular : 0x353A40
       sharpeness : .02
       sharpoff : .5
       nprBump : .004

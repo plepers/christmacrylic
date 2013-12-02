@@ -25,8 +25,6 @@ define [
 
     init : (@ctx) ->
 
-      @gui = new dat.GUI()
-      @gui.add @, '_running'
 
       @renderer = new THREE.WebGLRenderer(
         antialias: true # to get smoother output
@@ -46,6 +44,10 @@ define [
 
       @scene = new Scene ctx
       @scene.load()
+
+
+      @gui = new dat.GUI()
+      @gui.add @scene, 'animate'
 
 
     play : ->

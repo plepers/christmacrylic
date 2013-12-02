@@ -72,6 +72,8 @@ define [
 
     constructor : ->
 
+      @numPasses = 10
+
       @cfg = getConfig()
 
       @scene = new THREE.Scene();
@@ -115,9 +117,9 @@ define [
         ]
 
         p.phase = [
-          Math.random() * 100
-          Math.random() * 100
-          Math.random() * 100
+          1000 + Math.random() * 100
+          1000 + Math.random() * 100
+          1000 + Math.random() * 100
         ]
         p.tex = new THREE.WebGLRenderTarget( width * p.texSize, height * p.texSize, opts )
         @uniforms[ "tex#{i}" ].value = p.tex
@@ -179,6 +181,6 @@ define [
 
     }
     """
-  
+
 
   Composer
