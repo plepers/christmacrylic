@@ -80,8 +80,8 @@ define [
         m.normalScale.set( m.acrilic*@acrylic, m.acrilic*@acrylic )
 
       if @animate
-        @animCount++
-        if @animCount == 3
+        @animCount+= @ctx.dt
+        if @animCount > .12
           @animCount = 0
           low = Math.random()*.001 + .8
           NprFreqLow.set low,low,low
