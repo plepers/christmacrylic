@@ -90,7 +90,6 @@ define [
 
 
     show : ->
-      console.log "iuyiuyiyu"
       @scene3d.remove @loading
       @scene3d.add @holder
 

@@ -135,10 +135,7 @@ define [
       val = if flag then .4 else -1.0
       @fade = new TWEEN.Tween( @uniforms.luminosity )
         .to( {value : val }, 3000 )
-        .onComplete(
-          ->
-            console.log "open comlpete qksjhdjh"
-            deferred.resolve() )
+        .onComplete( deferred.resolve )
         .start()
 
       deferred.promise
