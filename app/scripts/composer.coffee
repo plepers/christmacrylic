@@ -108,7 +108,7 @@ define [
       opts =
         minFilter: THREE.LinearFilter
         magFilter: THREE.LinearFilter
-        format: THREE.RGBAFormat
+        format: THREE.RGBFormat
         stencilBuffer:false
 
       for p, i in @cfg.phases
@@ -178,9 +178,9 @@ define [
     for p, i in cfg.phases
 
       if i is 0
-        sh += "vec4 px = texture2D( tex#{i}, vUv );\n"
+        sh += "vec3 px = texture2D( tex#{i}, vUv ).xyz;\n"
       else
-        sh += "px = px + texture2D( tex#{i}, vUv );\n"
+        sh += "px = px + texture2D( tex#{i}, vUv ).xyz;\n"
 
     sh +=
     """
@@ -189,7 +189,7 @@ define [
       vign = 1.0-pow( vign, vec2(4.0) );
       float t = ( vign.x*vign.y*.6 )+luminosity;
 
-      gl_FragColor = (px / numtexs);
+      gl_FragColor = (vec4(px,1.0) / numtexs);
       gl_FragColor.xyz = (gl_FragColor.xyz * ctMul + ctOff)*t;
 
     }
