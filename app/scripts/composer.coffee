@@ -5,8 +5,10 @@
 #    Time: 21:04
 define [
   'tween'
+  'when'
 ], (
   TWEEN
+  When
 )->
 
 
@@ -127,15 +129,24 @@ define [
 
         @uniforms[ "tex#{i}" ].value = p.tex
 
-    open : ->
-      console.log 'mlkmlkm'
+    open : (flag = true)->
+
+      deferred = When.defer()
+      val = if flag then .4 else -1.0
       @fade = new TWEEN.Tween( @uniforms.luminosity )
-        .to( {value : .4 }, 3000 ).start()
+        .to( {value : val }, 3000 )
+        .onComplete(
+          ->
+            console.log "open comlpete qksjhdjh"
+            deferred.resolve() )
+        .start()
+
+      deferred.promise
 
   getUniforms = (cfg)->
     uniforms =
       numtexs : { type: "f", value: cfg.phases.length },
-      luminosity : { type: "f", value: -1.0 },
+      luminosity : { type: "f", value: .4 },
       ctMul : { type: "v3", value: new THREE.Vector3(1.0,1.0,1.0) },
       ctOff : { type: "v3", value: new THREE.Vector3(1.0,1.0,1.0)  },
 

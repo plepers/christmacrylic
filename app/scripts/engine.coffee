@@ -55,6 +55,7 @@ define [
       @gui = new dat.GUI()
       @gui.add @scene, 'animate'
       @gui.add @scene, 'noisiness', 0, .01
+      @gui.add @scene, 'acrylic', 0, 2
       @gui.close()
 
 
@@ -66,7 +67,10 @@ define [
         @renderer.setSize w, h
 
     sceneLoaded : =>
-      @composer.open()
+
+      @composer.open( no )
+        .then( => @scene.show() )
+        .then( => @composer.open() )
 
     play : ->
       return if @_running

@@ -7,12 +7,14 @@
 define [
   'three'
   'when'
+  'loading'
   'materials/NPRMaterial'
   'materials/NPRPhongMaterial'
   './tasks'
 ], (
   THREE
   When
+  Loading
   NPRMaterial
   NPRPhongMaterial
   tasks
@@ -32,16 +34,20 @@ define [
       @textures = {}
       @materials = []
 
+      @holder = new THREE.Object3D()
+
       @animate = yes
       @animCount = 0
 
       @noisiness = .004
+      @acrylic = 1.0
 
       @scene3d = new THREE.Scene()
       @camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 1, 20000 )
-      @camera.position.x = -247.32693778059766
-      @camera.position.y = 147.07942855805342
-      @camera.position.z = 300
+
+      @camera.position.x = 0
+      @camera.position.y = 40
+      @camera.position.z = 100
 
       @nprBumpPhase = NprBumpPhase
 
@@ -56,16 +62,22 @@ define [
       @scene3d.add @light2
 
 
-      @orbit = new THREE.OrbitControls @camera, document.getElementById("canvas-wrapper")
-      @orbit.target.set -100, 100, -200
+
+
+
+
+      @loading = new Loading @
+      @scene3d.add @loading
+
 
 
 
     preRender : (dt)->
-      @orbit.update()
+      @orbit?.update()
 
       for m in @materials
         m.uniforms.nbump.value  = @noisiness
+        m.normalScale.set( m.acrilic*@acrylic, m.acrilic*@acrylic )
 
       if @animate
         @animCount++
@@ -77,14 +89,28 @@ define [
           NprFreqHi.set hi,hi,hi
 
 
+    show : ->
+      console.log "iuyiuyiyu"
+      @scene3d.remove @loading
+      @scene3d.add @holder
 
+      @camera.position.x = -247.32693778059766
+      @camera.position.y = 147.07942855805342
+      @camera.position.z = 300
+
+      @orbit = new THREE.OrbitControls @camera, document.getElementById("canvas-wrapper")
+      @orbit.target.set -100, 100, -200
 
     load : ->
+      @loading.run()
+        .then( @loadTexs )
+        .then( @texLoaded )
+
+    loadTexs : =>
       When.all( [
         @loadTexture 'acrilic_NRM_deep.png'
         @loadTexture 'sky.jpg'
       ] )
-      .then @texLoaded
 
     texLoaded : ()=>
       console.log 'textures loaded'
@@ -94,12 +120,13 @@ define [
 
     loadScene : =>
       console.log 'loadScene'
+
       When.all [
-        @loadModel 'sapin'
-        @loadModel 'ground'
-        @loadModel 'chalets'
-        @loadModel 'foret'
-        @loadModel 'sleigh'
+        @loadModel( 'sapin'   ).then @addMesh
+        @loadModel( 'ground'  ).then @addMesh
+        @loadModel( 'chalets' ).then @addMesh
+        @loadModel( 'foret'   ).then @addMesh
+        @loadModel( 'sleigh'  ).then @addMesh
 
         tasks.loadModel( 'assets/sky.js' )
           .then @skyLoaded
@@ -112,12 +139,12 @@ define [
 
       sky = new THREE.Mesh geom, mat
       sky.rotation.y = -Math.PI*.7
-      @scene3d.add( sky )
+      @holder.add( sky )
 
 
-    loaded : (mesh)=>
+    addMesh : (mesh)=>
       console.log 'loaded mesh', mesh
-      @scene3d.add( mesh )
+      @holder.add( mesh )
 
       @material = mesh.material
 
@@ -131,7 +158,7 @@ define [
     loadModel : (name)->
       tasks.loadModel("assets/#{name}.js")
         .then( @createMesh(name) )
-        .then @loaded
+
 
     createMesh : (name)=>
       (geom)=>
@@ -158,6 +185,8 @@ define [
       if opts.nprBump?    then mat.uniforms.nbump.value  =      opts.nprBump
       if opts.nprFreq?    then mat.uniforms.nbumpFreq.value = opts.nprFreq
       if opts.acrilic?    then mat.normalScale.set( opts.acrilic, opts.acrilic )
+
+      mat.acrilic = opts.acrilic
 
 
       if opts.vc
