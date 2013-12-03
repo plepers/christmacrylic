@@ -17,12 +17,14 @@ define [
   'underscore'
   'three'
   'errors'
+  'tween'
 ], (
   When
   $
   _
   THREE
   errors
+  TWEEN
 )->
 
   {
@@ -215,19 +217,17 @@ define [
       When ctx
 
 
-    # setupFraming
-    # --------
-    # run TweenJs lib update cycle
-    #
-    #setupFraming : (ctx)->
-    #  prev = Date.now()
-    #  do frame = ->
-    #    now = Date.now()
-    #   ctx.dt = (now - prev)/1000
-    #   prev = now
-    #   TWEEN.update()
-    #   ctx.requestAnimationFrame frame
-    # When ctx
+
+
+    setupFraming : (ctx)->
+      prev = Date.now()
+      do frame = ->
+        now = Date.now()
+        ctx.dt = (now - prev)/1000
+        prev = now
+        TWEEN.update()
+        ctx.requestAnimationFrame frame
+      When ctx
 
 
     # normalizeAudio

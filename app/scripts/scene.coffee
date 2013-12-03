@@ -32,7 +32,7 @@ define [
       @textures = {}
       @materials = []
 
-      @animate = no
+      @animate = yes
       @animCount = 0
 
       @noisiness = .004
@@ -94,15 +94,16 @@ define [
 
     loadScene : =>
       console.log 'loadScene'
+      When.all [
+        @loadModel 'sapin'
+        @loadModel 'ground'
+        @loadModel 'chalets'
+        @loadModel 'foret'
+        @loadModel 'sleigh'
 
-      @loadModel 'sapin'
-      @loadModel 'ground'
-      @loadModel 'chalets'
-      @loadModel 'foret'
-      @loadModel 'sleigh'
-
-      tasks.loadModel( 'assets/sky.js' )
-        .then @skyLoaded
+        tasks.loadModel( 'assets/sky.js' )
+          .then @skyLoaded
+      ]
 
 
     skyLoaded : (geom) =>

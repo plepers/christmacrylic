@@ -34,8 +34,12 @@ define [
       @renderer.setClearColorHex 0x0, 1
 
 
-      @renderer.setSize window.innerWidth, window.innerHeight
-      document.getElementById("canvas-wrapper").appendChild @renderer.domElement
+      @container = document.getElementById("canvas-wrapper")
+      @container.appendChild @renderer.domElement
+
+      @renderer.setSize @container.clientWidth,@container.clientHeight
+
+
 
       @composer = new Composer()
       mul = 1.2
@@ -45,12 +49,24 @@ define [
 
       @scene = new Scene ctx
       @scene.load()
+        .then @sceneLoaded
 
 
       @gui = new dat.GUI()
       @gui.add @scene, 'animate'
       @gui.add @scene, 'noisiness', 0, .01
+      @gui.close()
 
+
+      $(window).resize =>
+        w = @container.clientWidth
+        h = @container.clientHeight
+        @scene.camera.aspect = w / h
+        @scene.camera.updateProjectionMatrix()
+        @renderer.setSize w, h
+
+    sceneLoaded : =>
+      @composer.open()
 
     play : ->
       return if @_running

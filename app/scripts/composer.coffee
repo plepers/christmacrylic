@@ -4,9 +4,9 @@
 #    Date: 11/11/2013
 #    Time: 21:04
 define [
-  ''
+  'tween'
 ], (
-
+  TWEEN
 )->
 
 
@@ -127,10 +127,15 @@ define [
 
         @uniforms[ "tex#{i}" ].value = p.tex
 
+    open : ->
+      console.log 'mlkmlkm'
+      @fade = new TWEEN.Tween( @uniforms.luminosity )
+        .to( {value : .4 }, 3000 ).start()
 
   getUniforms = (cfg)->
     uniforms =
       numtexs : { type: "f", value: cfg.phases.length },
+      luminosity : { type: "f", value: -1.0 },
       ctMul : { type: "v3", value: new THREE.Vector3(1.0,1.0,1.0) },
       ctOff : { type: "v3", value: new THREE.Vector3(1.0,1.0,1.0)  },
 
@@ -153,6 +158,7 @@ define [
     uniform float numtexs;
     uniform vec3 ctMul;
     uniform vec3 ctOff;
+    uniform float luminosity;
 
     void main() {
 
@@ -169,8 +175,8 @@ define [
     """
 
       vec2 vign = abs(vUv.xy-.5)*2.0;
-      vign = 1.0-pow( vign, vec2(6.0) );
-      float t = ( vign.x*vign.y*.5 )+.5;
+      vign = 1.0-pow( vign, vec2(4.0) );
+      float t = ( vign.x*vign.y*.6 )+luminosity;
 
       gl_FragColor = (px / numtexs);
       gl_FragColor.xyz = (gl_FragColor.xyz * ctMul + ctOff)*t;

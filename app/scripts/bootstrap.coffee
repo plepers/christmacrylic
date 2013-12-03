@@ -24,7 +24,7 @@ define [
     tasks.setupXhr
     tasks.setupRenderer
     tasks.setupAnimator
-    # tasks.setupFraming
+    tasks.setupFraming
     tasks.normalizeAudio
     tasks.inputFeatures
     tasks.configure

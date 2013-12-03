@@ -6,7 +6,8 @@
     "jquery": "~1.10.2",
     "requirejs": "~2.1.9",
     "when": "~2.6.0",
-    "underscore-amd": "~1.5.2"
+    "underscore-amd": "~1.5.2",
+    "tweenjs": "*"
   },
   "devDependencies": {}
 }
