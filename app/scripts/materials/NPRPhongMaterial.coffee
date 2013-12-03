@@ -475,56 +475,7 @@ define [
 
       "#endif",
 
-      "#if MAX_HEMI_LIGHTS > 0",
 
-        "vec3 hemiDiffuse  = vec3( 0.0 );",
-        "vec3 hemiSpecular = vec3( 0.0 );" ,
-
-        "for( int i = 0; i < MAX_HEMI_LIGHTS; i ++ ) {",
-
-          "vec4 lDirection = viewMatrix * vec4( hemisphereLightDirection[ i ], 0.0 );",
-          "vec3 lVector = normalize( lDirection.xyz );",
-
-
-          "float dotProduct = dot( normal, lVector );",
-          "float hemiDiffuseWeight = 0.5 * dotProduct + 0.5;",
-
-          "vec3 hemiColor = mix( hemisphereLightGroundColor[ i ], hemisphereLightSkyColor[ i ], hemiDiffuseWeight );",
-
-          "hemiDiffuse += diffuse * hemiColor;",
-
-
-          "vec3 hemiHalfVectorSky = normalize( lVector + viewPosition );",
-          "float hemiDotNormalHalfSky = 0.5 * dot( normal, hemiHalfVectorSky ) + 0.5;",
-          "float hemiSpecularWeightSky = specularStrength * max( pow( hemiDotNormalHalfSky, shininess ), 0.0 );",
-
-
-          "vec3 lVectorGround = -lVector;",
-
-          "vec3 hemiHalfVectorGround = normalize( lVectorGround + viewPosition );",
-          "float hemiDotNormalHalfGround = 0.5 * dot( normal, hemiHalfVectorGround ) + 0.5;",
-          "float hemiSpecularWeightGround = specularStrength * max( pow( hemiDotNormalHalfGround, shininess ), 0.0 );",
-
-          "#ifdef PHYSICALLY_BASED_SHADING",
-
-            "float dotProductGround = dot( normal, lVectorGround );",
-
-
-            "float specularNormalization = ( shininess + 2.0001 ) / 8.0;",
-
-            "vec3 schlickSky = specular + vec3( 1.0 - specular ) * pow( 1.0 - dot( lVector, hemiHalfVectorSky ), 5.0 );",
-            "vec3 schlickGround = specular + vec3( 1.0 - specular ) * pow( 1.0 - dot( lVectorGround, hemiHalfVectorGround ), 5.0 );",
-            "hemiSpecular += hemiColor * specularNormalization * ( schlickSky * hemiSpecularWeightSky * max( dotProduct, 0.0 ) + schlickGround * hemiSpecularWeightGround * max( dotProductGround, 0.0 ) );",
-
-          "#else",
-
-            "hemiSpecular += specular * hemiColor * ( hemiSpecularWeightSky + hemiSpecularWeightGround ) * hemiDiffuseWeight;",
-
-          "#endif",
-
-        "}",
-
-      "#endif",
 
       "vec3 totalDiffuse = vec3( 0.0 );",
       "vec3 totalSpecular = vec3( 0.0 );",
@@ -536,12 +487,6 @@ define [
 
       "#endif",
 
-      "#if MAX_HEMI_LIGHTS > 0",
-
-        "totalDiffuse += hemiDiffuse;",
-        "totalSpecular += hemiSpecular;",
-
-      "#endif",
 
       "#if MAX_POINT_LIGHTS > 0",
 

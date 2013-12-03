@@ -106,7 +106,8 @@ define [
       opts =
         minFilter: THREE.LinearFilter
         magFilter: THREE.LinearFilter
-        format: THREE.RGBFormat
+        format: THREE.RGBAFormat
+        stencilBuffer:false
 
       for p, i in @cfg.phases
         #p.texSize = 1
@@ -122,6 +123,8 @@ define [
           1000 + Math.random() * 100
         ]
         p.tex = new THREE.WebGLRenderTarget( width * p.texSize, height * p.texSize, opts )
+        p.tex.generateMipmaps = false
+
         @uniforms[ "tex#{i}" ].value = p.tex
 
 
@@ -165,7 +168,7 @@ define [
     sh +=
     """
 
-      vec2 vign = (vUv.xy-.5)*2.0;
+      vec2 vign = abs(vUv.xy-.5)*2.0;
       vign = 1.0-pow( vign, vec2(6.0) );
       float t = ( vign.x*vign.y*.5 )+.5;
 

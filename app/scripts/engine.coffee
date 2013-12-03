@@ -28,7 +28,8 @@ define [
 
       @renderer = new THREE.WebGLRenderer(
         antialias: true # to get smoother output
-        preserveDrawingBuffer: true # to allow screenshot
+        stencil:false
+        precision: 'lowp'
       )
       @renderer.setClearColorHex 0x0, 1
 
